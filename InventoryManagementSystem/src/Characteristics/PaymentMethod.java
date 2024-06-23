@@ -1,6 +1,7 @@
 package Characteristics;
 
+import Order.ShoppingCart;
+
 public interface PaymentMethod {
-    void validateCardDetails();
-    void processPayment(double amount);
+    boolean processPayment(double amount, ShoppingCart cart);
 }

@@ -41,7 +41,7 @@ public class FragileItem extends InventoryItem {
 
     @Override
     public double calculateValue() {
-        double fragileItemValue = super.calculateValue() + this.insuranceMaterialValue;
+        double fragileItemValue = super.calculateValue() * getQuantity() + this.insuranceMaterialValue;
         if(this.isTemperatureSensitive){
             fragileItemValue *=1.2;
         }

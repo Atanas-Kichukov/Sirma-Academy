@@ -4,6 +4,7 @@ import Items.ElectronicsItem;
 import Items.FragileItem;
 import Items.GroceryItem;
 import Items.InventoryItem;
+import Order.ShoppingCart;
 
 import java.io.*;
 import java.time.LocalDate;
@@ -44,13 +45,16 @@ public class InventoryManagement {
     }
 
     public void removeItemByName(String name) {
-        for (InventoryItem item : allItems) {
-            if(item.getName().equalsIgnoreCase(name)){
-                System.out.println("Successfully removed item with name: " + item.getName() + ".");
-                this.allItems.remove(item);
+        Iterator<InventoryItem> iterator = allItems.iterator();
+        while (iterator.hasNext()) {
+            InventoryItem item = iterator.next();
+            if (item.getName().equalsIgnoreCase(name)) {
+                iterator.remove();
+                System.out.println("Item with ID " + name + " was removed from the inventory.");
+                return;
             }
         }
-        System.out.println("Item with name: " + name + " wasn't found.");
+        System.out.println("Item with ID " + name + " wasn't found in the inventory.");
     }
 
     public InventoryItem getItemByName(String name) {
@@ -68,24 +72,23 @@ public class InventoryManagement {
                 writer.write(itemToFileFormat(item));
             }
             System.out.println("Inventory data was saved to file: " + filename);
-        }catch (IOException exception){
+        } catch (IOException exception) {
             System.err.println("Error saving inventory data to file: " + filename);
         }
     }
 
     public void loadInventoryFromFile(String filename) throws IOException {
-        try(BufferedReader reader = new BufferedReader(new FileReader(filename))){
+        try (BufferedReader reader = new BufferedReader(new FileReader(filename))) {
             String line;
-            while ((line = reader.readLine()) != null){
+            while ((line = reader.readLine()) != null) {
                 InventoryItem item = fileFormatToItem(line);
                 allItems.add(item);
             }
             System.out.println("Inventory data loaded from file: " + filename);
 
-        }
-        catch (FileNotFoundException exception){
+        } catch (FileNotFoundException exception) {
             System.err.println("File not found: " + filename);
-        }catch (IOException exception){
+        } catch (IOException exception) {
             System.err.println("Error reading file: " + filename);
         }
     }
@@ -125,7 +128,7 @@ public class InventoryManagement {
 
             return basicCharacteristics + "," + electronicsItemCharacteristics + System.lineSeparator();
 
-        } else if(item instanceof  FragileItem) {
+        } else if (item instanceof FragileItem) {
             FragileItem fragileItem = (FragileItem) item;
             String fragileItemCharacteristics = String.join(",",
                     Boolean.toString(fragileItem.isTemperatureSensitive()),
@@ -164,23 +167,23 @@ public class InventoryManagement {
             int ram = Integer.parseInt(parts[12]);
             ElectronicsItem electronicsItem = null;
             if (ram > 0 && cameraResolution > 0 && batteryLifePercentage > 0) {
-                 electronicsItem = new ElectronicsItem(ram,cameraResolution,batteryLifePercentage,material,category,name,price,description,quantity);
+                electronicsItem = new ElectronicsItem(ram, cameraResolution, batteryLifePercentage, material, category, name, price, description, quantity);
 
-            }else if(dB>0){
-                 electronicsItem = new ElectronicsItem(material,category,name,price,description,quantity,dB);
-            }else if(countOfBatteries>0){
-                 electronicsItem = new ElectronicsItem(material,category,name,countOfBatteries,price,quantity,description);
+            } else if (dB > 0) {
+                electronicsItem = new ElectronicsItem(material, category, name, price, description, quantity, dB);
+            } else if (countOfBatteries > 0) {
+                electronicsItem = new ElectronicsItem(material, category, name, countOfBatteries, price, quantity, description);
             } else if (screenSizeInches > 0) {
-                 electronicsItem = new ElectronicsItem(material,category,name,price,screenSizeInches,quantity,description);
-            }else if(ram >0){
-                electronicsItem = new ElectronicsItem(ram,material,category,name,price,description,quantity);
+                electronicsItem = new ElectronicsItem(material, category, name, price, screenSizeInches, quantity, description);
+            } else if (ram > 0) {
+                electronicsItem = new ElectronicsItem(ram, material, category, name, price, description, quantity);
             }
             electronicsItem.setDateAdded(dateAdded);
             return electronicsItem;
-        }else if(parts.length == 9){
+        } else if (parts.length == 9) {
             boolean isTemperatureSensitive = Boolean.parseBoolean(parts[7]);
             double insuranceMaterialValue = Double.parseDouble(parts[8]);
-            FragileItem fragileItem = new FragileItem(isTemperatureSensitive,insuranceMaterialValue,material,category,name,price,description,quantity);
+            FragileItem fragileItem = new FragileItem(isTemperatureSensitive, insuranceMaterialValue, material, category, name, price, description, quantity);
             fragileItem.setDateAdded(dateAdded);
             return fragileItem;
         }
@@ -190,9 +193,9 @@ public class InventoryManagement {
 
     public void removeItemById(Long id) {
         Iterator<InventoryItem> iterator = allItems.iterator();
-        while(iterator.hasNext()){
+        while (iterator.hasNext()) {
             InventoryItem item = iterator.next();
-            if(item.getId() == id){
+            if (item.getId() == id) {
                 iterator.remove();
                 System.out.println("Item with ID " + id + " was removed from the inventory.");
                 return;
@@ -201,13 +204,33 @@ public class InventoryManagement {
         System.out.println("Item with ID " + id + " wasn't found in the inventory.");
 
     }
-    public void findById(Long id){
+
+    public void findById(Long id) {
         for (InventoryItem item : allItems) {
-            if(item.getId() == id){
-                System.out.println("The name of item with ID " + id + " is "+ item.getName());
+            if (item.getId() == id) {
+                System.out.println("The name of item with ID " + id + " is " + item.getName());
                 return;
             }
         }
         System.out.println("Item with ID " + id + " wasn't found in the inventory.");
+    }
+
+    public void removeQuantities(ShoppingCart cart) {
+        List<InventoryItem> itemsInCart = cart.getCart();
+        for (InventoryItem item : itemsInCart) {
+            InventoryItem itemInInventory = getItemByName(item.getName());
+            int updatedQuantity = itemInInventory.getQuantity() - item.getQuantity();
+            if (updatedQuantity <= 0) {
+                if(item instanceof  GroceryItem){
+                    if(((GroceryItem) item).getWeight() <= 0 ){
+                        removeItemByName(itemInInventory.getName());
+                    }
+                }
+                removeItemByName(itemInInventory.getName());
+            } else {
+                itemInInventory.setQuantity(updatedQuantity);
+            }
+        }
+        cart.getCart().clear();
     }
 }

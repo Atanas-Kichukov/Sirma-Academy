@@ -45,13 +45,8 @@ public class InventoryItem extends AbstractItem {
     }
 
     @Override
-    public void handleBreakage() {
-    //TODO
-    }
-
-    @Override
     public double calculateValue() {
-    return this.quantity * (this.price * category.getValue());
+    return  this.price * category.getValue();
 
     }
 
@@ -63,8 +58,4 @@ public class InventoryItem extends AbstractItem {
                 || category == Category.BEVERAGES;
     }
 
-    @Override
-    public void handleExpiration() {
-    //TODO
-    }
 }

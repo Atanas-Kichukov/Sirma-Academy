@@ -87,9 +87,7 @@ public abstract class AbstractItem implements Item, Categorizable, Breakable, Pe
     public abstract void getItemDetails();
 
     public abstract boolean isItemBreakable();
-    public abstract  void handleBreakage();
     public abstract  double calculateValue();
     public abstract  boolean isItemPerishable();
-    public abstract  void handleExpiration();
 }
 

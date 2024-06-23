@@ -120,7 +120,7 @@ public class ElectronicsItem extends InventoryItem {
 
     @Override
     public double calculateValue() {
-        double electronicDeviceValue = super.calculateValue();
+        double electronicDeviceValue = super.calculateValue() * getQuantity();
         if (countOFBatteries > 0) {
             electronicDeviceValue += countOFBatteries;
         }

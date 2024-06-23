@@ -1,3 +1,1 @@
-Steel Bar,METAL,ART,10.0,50,Strong steel bar,2024-06-22
-Smartphone,PLASTIC,MOBILE_DEVICES,500.0,10,High-end smartphone,2024-06-22,0,0,80,12,0,4
-Glass Vase,GLASS,ART,30.0,5,Fragile glass vase,2024-06-22,true,20.0
+krusha,ORGANIC,FRUITS_VEGETABLES,100.0,90,asdsadasdasd,2024-06-23,true,true,true,900.0
