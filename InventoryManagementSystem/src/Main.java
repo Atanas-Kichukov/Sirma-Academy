@@ -15,7 +15,13 @@ import java.util.List;
 import java.util.Scanner;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
-
+//You are tasked with developing a comprehensive Inventory Management System for a
+//small store. This system should manage various types of items, handle payments, and
+//process orders. Implement interfaces, abstract classes, and multiple concrete classes.
+//You are tasked with developing an E-commerce Console Application that includes
+//inventory management, order processing, and payment handling. This project builds upon
+//the existing inventory management system and introduces payment processing
+//capabilities.
 public class Main {
     public static void main(String[] args) throws IOException {
         Scanner scanner = new Scanner(System.in);
